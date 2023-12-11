@@ -46,9 +46,9 @@ public class ListViewModel extends ViewModel {
             public void onResponse(@NonNull Call<SearchResponse> call, @NonNull Response<SearchResponse> response) {
 
                 SearchResponse result = response.body();
-
                 if (result != null) {
                     aggregatedItems.addAll(result.getSearch());
+                    liveData.setValue(SearchResult.success(result.getSearch(), result.getTotalResults()));
                 }
             }
 
