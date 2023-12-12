@@ -7,9 +7,10 @@ import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.SearchView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import javax.inject.Inject;
 
-import androidx.appcompat.app.AppCompatActivity;
 import dagger.android.AndroidInjection;
 import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
@@ -17,11 +18,13 @@ import dagger.android.HasAndroidInjector;
 
 public class MovieListActivity extends AppCompatActivity implements HasAndroidInjector {
     private static final String IS_SEARCH_VIEW_ICONIFIED = "is_search_view_iconified";
+    private static final String CURRENT_QUERY = "current_query";
 
     @Inject
     DispatchingAndroidInjector<Object> dispatchingActivityInjector;
     private SearchView searchView;
     private boolean searchViewExpanded = true;
+    private String currentQuery = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,7 @@ public class MovieListActivity extends AppCompatActivity implements HasAndroidIn
                     .commit();
         } else {
             searchViewExpanded = savedInstanceState.getBoolean(IS_SEARCH_VIEW_ICONIFIED);
+            currentQuery = savedInstanceState.getString(CURRENT_QUERY);
         }
     }
 
@@ -62,6 +66,8 @@ public class MovieListActivity extends AppCompatActivity implements HasAndroidIn
             }
         });
 
+        searchView.setQuery(currentQuery, false);
+
         return true;
     }
 
@@ -69,6 +75,7 @@ public class MovieListActivity extends AppCompatActivity implements HasAndroidIn
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(IS_SEARCH_VIEW_ICONIFIED, searchView.isIconified());
+        outState.putString(CURRENT_QUERY, searchView.getQuery().toString());
     }
 
     @Override
