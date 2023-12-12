@@ -36,12 +36,13 @@ class DetailActivity : DaggerAppCompatActivity(), QueryProvider {
     }
 
     override fun getMovieId(): String {
-        return intent?.data?.getQueryParameter("imdbID") ?: run {
+        return intent?.data?.getQueryParameter(IMDB_ID_PARAM) ?: run {
             throw IllegalStateException("You must provide movie id to display details")
         }
     }
 
     companion object {
+        const val IMDB_ID_PARAM = "imdbID"
         lateinit var queryProvider: QueryProvider
     }
 }
