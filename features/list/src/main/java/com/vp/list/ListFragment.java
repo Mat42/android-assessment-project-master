@@ -13,6 +13,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +44,7 @@ public class ListFragment extends Fragment implements GridPagingScrollListener.L
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
     private TextView errorTextView;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private String currentQuery = "Interview";
 
     @Override
@@ -60,6 +63,8 @@ public class ListFragment extends Fragment implements GridPagingScrollListener.L
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefresh);
         recyclerView = view.findViewById(R.id.recyclerView);
         viewAnimator = view.findViewById(R.id.viewAnimator);
         progressBar = view.findViewById(R.id.progressBar);
@@ -78,6 +83,8 @@ public class ListFragment extends Fragment implements GridPagingScrollListener.L
         });
         listViewModel.searchMoviesByTitle(currentQuery, 1);
         showProgressBar();
+
+        swipeRefreshLayout.setOnRefreshListener(() -> listViewModel.searchMoviesByTitle(currentQuery, 1));
     }
 
     private void initBottomNavigation(@NonNull View view) {
@@ -119,11 +126,16 @@ public class ListFragment extends Fragment implements GridPagingScrollListener.L
         viewAnimator.setDisplayedChild(viewAnimator.indexOfChild(errorTextView));
     }
 
+    private void hideRefreshIndicator() {
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
     private void handleResult(@NonNull ListAdapter listAdapter, @NonNull SearchResult searchResult) {
         switch (searchResult.getListState()) {
             case LOADED: {
                 setItemsData(listAdapter, searchResult);
                 showList();
+                hideRefreshIndicator();
                 break;
             }
             case IN_PROGRESS: {
@@ -131,6 +143,7 @@ public class ListFragment extends Fragment implements GridPagingScrollListener.L
                 break;
             }
             default: {
+                hideRefreshIndicator();
                 showError();
             }
         }
