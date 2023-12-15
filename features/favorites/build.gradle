@@ -1,4 +1,6 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -9,6 +11,12 @@ android {
 
         testInstrumentationRunner "com.android.support.test.runner.AndroidJUnitRunner"
 
+    }
+
+    buildFeatures{
+        viewBinding {
+            enabled = true
+        }
     }
 
     buildTypes {
@@ -26,11 +34,35 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(':dagger.addons')
+    implementation project(':component:favorites')
 
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayout"
 
-    //support
+    //support library
+    implementation "androidx.activity:activity-ktx:$rootProject.activityKtx"
     implementation "androidx.appcompat:appcompat:$rootProject.supportLibraryVersion"
+    implementation "androidx.recyclerview:recyclerview:$rootProject.recyclerView"
+    implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayout"
+    implementation "com.google.android.material:material:$rootProject.supportLibraryVersion"
+
+    //dagger
+    implementation "com.google.dagger:dagger:$rootProject.dagger"
+    kapt "com.google.dagger:dagger-compiler:$rootProject.dagger"
+    implementation "com.google.dagger:dagger-android:$rootProject.dagger"
+    implementation("com.google.dagger:dagger-android-support:$rootProject.dagger")
+    kapt "com.google.dagger:dagger-android-processor:$rootProject.dagger"
+
+    //lifecycle
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycle"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$rootProject.lifecycle"
+
+    //room
+    implementation "androidx.room:room-common:$rootProject.room"
+
+    //lifecycle
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycle"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$rootProject.lifecycle"
 
     //tests
     testImplementation 'junit:junit:4.13.2'

@@ -38,6 +38,7 @@ android {
 
 dependencies {
     implementation project(':dagger.addons')
+    implementation project(':component:favorites')
     implementation "androidx.appcompat:appcompat:$rootProject.supportLibraryVersion"
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayout"
     implementation 'org.jetbrains.kotlin:kotlin-reflect:1.8.0'
@@ -51,7 +52,9 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofit"
 
     //architecture components
-    implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.lifecycle"
+    //lifecycle
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycle"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$rootProject.lifecycle"
 
     //dagger
     implementation "com.google.dagger:dagger:$rootProject.dagger"

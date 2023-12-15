@@ -1,20 +1,9 @@
 package com.vp.list;
 
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +11,17 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ViewAnimator;
 
-import com.vp.detail.DetailActivity;
-import com.vp.list.viewmodel.SearchResult;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.vp.list.viewmodel.ListViewModel;
+import com.vp.list.viewmodel.SearchResult;
 
 import javax.inject.Inject;
 
@@ -51,7 +48,7 @@ public class ListFragment extends Fragment implements GridPagingScrollListener.L
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidSupportInjection.inject(this);
-        listViewModel = ViewModelProviders.of(this, factory).get(ListViewModel.class);
+        listViewModel = new ViewModelProvider(this, factory).get(ListViewModel.class);
     }
 
     @Nullable
@@ -76,7 +73,7 @@ public class ListFragment extends Fragment implements GridPagingScrollListener.L
 
         initBottomNavigation(view);
         initList();
-        listViewModel.observeMovies().observe(this, searchResult -> {
+        listViewModel.observeMovies().observe(getViewLifecycleOwner(), searchResult -> {
             if (searchResult != null) {
                 handleResult(listAdapter, searchResult);
             }
@@ -181,7 +178,7 @@ public class ListFragment extends Fragment implements GridPagingScrollListener.L
     public void onItemClick(String imdbID) {
         Uri uri = Uri.parse("app://movies/detail")
                 .buildUpon()
-                .appendQueryParameter(DetailActivity.IMDB_ID_PARAM, imdbID)
+                .appendQueryParameter("imdbID", imdbID)
                 .build();
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
