@@ -1,6 +1,5 @@
 package com.vp.detail.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.vp.component.favorites.domain.usecase.AddMovieToFavoritesUseCase
 import com.vp.component.favorites.domain.usecase.IsMovieFavoriteUseCase
 import com.vp.component.favorites.domain.usecase.RemoveMovieFromFavoritesUseCase
-import com.vp.detail.DetailActivity
 import com.vp.detail.model.MovieDetail
 import com.vp.detail.service.DetailService
 import kotlinx.coroutines.launch
@@ -29,8 +27,12 @@ class DetailsViewModel @Inject constructor(
     private val loadingState: MutableLiveData<LoadingState> = MutableLiveData()
     private var isFavorite: Boolean = false
 
-    init {
+    private lateinit var movieId: String
+
+    fun init(movieId: String) {
+        this.movieId = movieId
         getFavoriteStatus()
+        fetchDetails()
     }
 
     fun title(): LiveData<String> = title
@@ -39,9 +41,9 @@ class DetailsViewModel @Inject constructor(
 
     fun state(): LiveData<LoadingState> = loadingState
 
-    fun fetchDetails() {
+    private fun fetchDetails() {
         loadingState.value = LoadingState.IN_PROGRESS
-        detailService.getMovie(DetailActivity.queryProvider.getMovieId())
+        detailService.getMovie(movieId)
             .enqueue(object : Callback, retrofit2.Callback<MovieDetail> {
                 override fun onResponse(call: Call<MovieDetail>, response: Response<MovieDetail>) {
                     details.postValue(response.body())
@@ -63,7 +65,7 @@ class DetailsViewModel @Inject constructor(
     private fun getFavoriteStatus() {
         viewModelScope.launch {
             isFavorite =
-                isMovieFavoriteUseCase.invoke(IsMovieFavoriteUseCase.Params(DetailActivity.queryProvider.getMovieId()))
+                isMovieFavoriteUseCase.invoke(IsMovieFavoriteUseCase.Params(movieId))
         }
     }
 
@@ -81,7 +83,7 @@ class DetailsViewModel @Inject constructor(
             viewModelScope.launch {
                 addMovieToFavoritesUseCase.invoke(
                     AddMovieToFavoritesUseCase.Params(
-                        id = DetailActivity.queryProvider.getMovieId(),
+                        id = movieId,
                         title = title
                     )
                 )
@@ -89,11 +91,11 @@ class DetailsViewModel @Inject constructor(
         }
     }
 
-    fun removeFromFavorite() {
+    private fun removeFromFavorite() {
         viewModelScope.launch {
             removeMovieFromFavoritesUseCase.invoke(
                 RemoveMovieFromFavoritesUseCase.Params(
-                    DetailActivity.queryProvider.getMovieId()
+                    movieId
                 )
             )
         }
