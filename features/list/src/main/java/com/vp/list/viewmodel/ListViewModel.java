@@ -48,7 +48,7 @@ public class ListViewModel extends ViewModel {
                 SearchResponse result = response.body();
                 if (result != null) {
                     aggregatedItems.addAll(result.getSearch());
-                    liveData.setValue(SearchResult.success(result.getSearch(), result.getTotalResults()));
+                    liveData.setValue(SearchResult.success(aggregatedItems, result.getTotalResults()));
                 }
             }
 
