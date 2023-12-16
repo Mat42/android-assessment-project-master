@@ -35,11 +35,11 @@ public class ListViewModel extends ViewModel {
     }
 
     public void searchMoviesByTitle(@NonNull String title, int page) {
+        liveData.setValue(SearchResult.inProgress());
 
         if (page == 1 && !title.equals(currentTitle)) {
             aggregatedItems.clear();
             currentTitle = title;
-            liveData.setValue(SearchResult.inProgress());
         }
         searchService.search(title, page).enqueue(new Callback<SearchResponse>() {
             @Override

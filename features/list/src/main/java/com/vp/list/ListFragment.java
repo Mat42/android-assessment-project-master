@@ -112,7 +112,11 @@ public class ListFragment extends Fragment implements GridPagingScrollListener.L
     }
 
     private void showProgressBar() {
-        viewAnimator.setDisplayedChild(viewAnimator.indexOfChild(progressBar));
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void hideProgressBar() {
+        progressBar.setVisibility(View.GONE);
     }
 
     private void showList() {
@@ -133,6 +137,7 @@ public class ListFragment extends Fragment implements GridPagingScrollListener.L
                 setItemsData(listAdapter, searchResult);
                 showList();
                 hideRefreshIndicator();
+                hideProgressBar();
                 break;
             }
             case IN_PROGRESS: {
@@ -140,6 +145,7 @@ public class ListFragment extends Fragment implements GridPagingScrollListener.L
                 break;
             }
             default: {
+                hideProgressBar();
                 hideRefreshIndicator();
                 showError();
             }
